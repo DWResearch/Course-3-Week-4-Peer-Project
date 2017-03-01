@@ -138,7 +138,7 @@ dim(tidy_dat); tidy_dat[1:20, 1:5]
 arrange(dat, subject, act)
 tidy_dat[100:126, 1:5]
 ##Export tidy data as tidy_fitness_data.txt into folder
-write.table(tidy_dat, "tidy_fitness_data.txt", sep="\t")
+write.table(tidy_dat, "fitness_mean_data.txt", row.name=FALSE, sep="\t")
 ##Clean up memory and close
 rm(list=ls())
 ##END
