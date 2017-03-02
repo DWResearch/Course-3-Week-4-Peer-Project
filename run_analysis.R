@@ -7,11 +7,13 @@ setwd("C:/Users/Dana/Documents/Coursera-R/R Data/dataC3W4Peer")
 ##I manually downloaded the zip folder and imported the folder to the above.
 ##I did try doing the above in R but had no success. Instructions from TA did not resolve problem.
 ##
-#Importing from Train Folder
-##For each raw data set, check the dim of the file, and first three rows.
-##The rows in the dimension of each imported file should match in number.
 ##I took the opportunity in the the process of importing the datasets
 ##to carry out Task 4 and labeled the data set with descriptive variable names.
+##
+##Step 1: Importing from Train Folder
+##For each raw data set, check the dim of the file, and first three rows.
+##The rows in the dimension of each imported file should match in number.
+##
 ##create table from raw data on id and act 
 tr_id_dat = read.table("subject_train.txt")
 tr_act_dat = read.table("y_train.txt")
@@ -49,7 +51,9 @@ names(tr_atz_dat) <- gsub("V", "totacc_z ", names(tr_atz_dat))
 names(tr_gx_dat) <- gsub("V", "body_g_x ", names(tr_gx_dat))
 names(tr_gy_dat) <- gsub("V", "body_g_y ", names(tr_gy_dat))
 names(tr_gz_dat) <- gsub("V", "body_g_z ", names(tr_gz_dat))
-##Importing from Test Folder
+##
+##Step 2: Importing from Test Folder.
+##Replicated the previous with content of test folder and relabelled.
 ##create table from raw data on id
 te_id_dat = read.table("subject_test.txt")
 te_act_dat = read.table("y_test.txt")
@@ -122,10 +126,11 @@ head(MeanStd_dat, 10); tail(MeanStd_dat,10)
 ##create table from raw data on activity
 library(dplyr)
 ##Recode variables
-dat$act <- recode(dat$act, "1" = "walking", "2" = "walking_upstairs", "3" = "walking_downstairs", "4" = "sitting", 
+dat3 <- dat
+dat3$act <- recode(dat3$act, "1" = "walking", "2" = "walking_upstairs", "3" = "walking_downstairs", "4" = "sitting", 
                 "5" = "standing", "6" = "laying")
 ##Check after recoding. Since there are 7352 rows, check only first 3 and last 3 rows.
-dat[1:3, 1:10]; dat[(nrow(dat)-3): nrow(dat), 1:10]
+dat3[1:3, 1:10]; dat3[(nrow(dat)-3): nrow(dat), 1:10]
 ##
 ##Task 4: Appropriately labels the dataset with descriptive variable names.
 ##This was done in Task 1.
@@ -137,19 +142,120 @@ print("Below are the first five columns and first five rows."); dat[1:5, 1:5]
 print("Below are first five rows and last 5 columns."); dat[1:5, (ncol(dat)-5):ncol(dat)]
 ##
 ##Task 5: Create a second, independent tidy data set with the average of each variable for each activity and each subject.
-##Right now the combined data set is 7352 x 2177.
+##Right now the combined data set is 10299 observations x 1155 variables
 ##Number of rows need to be collapsed down to possibly 180 for 30 subjects with 6 activities.
-##Add Activity List to measurement data set.
 library(reshape2)
-dim(dat)
-##Group by subject followed by activity, then calculate mean of measurements.
-tidy_dat <- dat %>% group_by(exp, subject, act) %>% summarize_all(mean)
+##Find the mean of 128 pieces of data for each measurement and create its own file to later merge.
+names(te_id_dat) = "subject"; head(te_id_dat, 3)
+##te_x_dat = read.table("X_test.txt") not clear what this is, so not used.
+tr_alx_dat = read.table("body_acc_x_train.txt")
+tr_alx_dat$M_alx <- rowMeans(tr_alx_dat)
+Mtr_alx_dat <- tr_alx_dat["M_alx"]
+tr_aly_dat = read.table("body_acc_y_train.txt")
+tr_aly_dat$M_aly <- rowMeans(tr_aly_dat)
+Mtr_aly_dat <- tr_aly_dat["M_aly"]
+tr_alz_dat = read.table("body_acc_z_train.txt")
+tr_alz_dat$M_alz <- rowMeans(tr_alz_dat)
+Mtr_alz_dat <- tr_alz_dat["M_alz"]
+##check number of rows before preceding
+dim(Mtr_alx_dat); dim(Mtr_aly_dat); dim(Mtr_alz_dat) 
+tr_atx_dat = read.table("total_acc_x_train.txt")
+tr_atx_dat$M_atx <- rowMeans(tr_atx_dat)
+Mtr_atx_dat <- tr_atx_dat["M_atx"]
+tr_aty_dat = read.table("total_acc_y_train.txt")
+tr_aty_dat$M_aty <- rowMeans(tr_aty_dat)
+Mtr_aty_dat <- tr_aty_dat["M_aty"]
+tr_atz_dat = read.table("total_acc_z_train.txt")
+tr_atz_dat$M_atz <- rowMeans(tr_atz_dat)
+Mtr_atz_dat <- tr_atz_dat["M_atz"]
+##check number of rows before preceding
+dim(Mtr_atx_dat); dim(Mtr_aty_dat); dim(Mtr_atz_dat) 
+tr_gx_dat = read.table("body_gyro_x_train.txt")
+tr_gx_dat$M_gx <- rowMeans(tr_gx_dat)
+Mtr_gx_dat <- tr_gx_dat["M_gx"]
+tr_gy_dat = read.table("body_gyro_y_train.txt")
+tr_gy_dat$M_gy <- rowMeans(tr_gy_dat)
+Mtr_gy_dat <- tr_gy_dat["M_gy"]
+tr_gz_dat = read.table("body_gyro_z_train.txt")
+tr_gz_dat$M_gz <- rowMeans(tr_gz_dat)
+Mtr_gz_dat <- tr_gz_dat["M_gz"]
+##check number of rows
+dim(Mtr_gx_dat); dim(Mtr_gy_dat); dim(Mtr_gz_dat)
+##confirmed: all tables have 1 column
+##te_x_dat = read.table("X_test.txt") not clear what this is, so not used.
+te_alx_dat = read.table("body_acc_x_test.txt")
+te_alx_dat$M_alx <- rowMeans(te_alx_dat)
+Mte_alx_dat <- te_alx_dat["M_alx"]
+te_aly_dat = read.table("body_acc_y_test.txt")
+te_aly_dat$M_aly <- rowMeans(te_aly_dat)
+Mte_aly_dat <- te_aly_dat["M_aly"]
+te_alz_dat = read.table("body_acc_z_test.txt")
+te_alz_dat$M_alz <- rowMeans(te_alz_dat)
+Mte_alz_dat <- te_alz_dat["M_alz"]
+##check number of rows before preceding
+dim(Mte_alx_dat); dim(Mte_aly_dat); dim(Mte_alz_dat) 
+te_atx_dat = read.table("total_acc_x_test.txt")
+te_atx_dat$M_atx <- rowMeans(te_atx_dat)
+Mte_atx_dat <- te_atx_dat["M_atx"]
+te_aty_dat = read.table("total_acc_y_test.txt")
+te_aty_dat$M_aty <- rowMeans(te_aty_dat)
+Mte_aty_dat <- te_aty_dat["M_aty"]
+te_atz_dat = read.table("total_acc_z_test.txt")
+te_atz_dat$M_atz <- rowMeans(te_atz_dat)
+Mte_atz_dat <- te_atz_dat["M_atz"]
+##check number of rows before preceding
+dim(Mtr_atx_dat); dim(Mte_aty_dat); dim(Mte_atz_dat) 
+te_gx_dat = read.table("body_gyro_x_test.txt")
+te_gx_dat$M_gx <- rowMeans(te_gx_dat)
+Mte_gx_dat <- te_gx_dat["M_gx"]
+te_gy_dat = read.table("body_gyro_y_test.txt")
+te_gy_dat$M_gy <- rowMeans(te_gy_dat)
+Mte_gy_dat <- te_gy_dat["M_gy"]
+te_gz_dat = read.table("body_gyro_z_test.txt")
+te_gz_dat$M_gz <- rowMeans(te_gz_dat)
+Mte_gz_dat <- te_gz_dat["M_gz"]
+##check number of rows
+dim(Mte_gx_dat); dim(Mte_gy_dat); dim(Mte_gz_dat)
+##confirmed: all tables have 1 column
+##Merge all the mean data for training and then for testing. Create and add column for experiment: "tr" for train and "te" for test.
+M_training_dat <- cbind(tr_id_dat, tr_act_dat, Mtr_alx_dat, Mtr_aly_dat, Mtr_alz_dat, Mtr_atx_dat, Mtr_aty_dat, Mtr_atz_dat, Mtr_gx_dat, Mtr_gy_dat, Mtr_gz_dat)
+dim(M_training_dat)
+M_training_dat$exp <- "tr"
+dim(M_training_dat)
+M_testing_dat <- cbind(te_id_dat, te_act_dat, Mte_alx_dat, Mte_aly_dat, Mte_alz_dat, Mte_atx_dat, Mte_aty_dat, Mte_atz_dat, Mte_gx_dat, Mte_gy_dat, Mte_gz_dat)
+dim(M_testing_dat)
+M_testing_dat$exp <- "te"
+dim(M_testing_dat)
+M_dat <- rbind(M_training_dat, M_testing_dat)
+dim(M_dat)
+##Move experiment variable to the first column
+M_dat <-M_dat[, c(ncol(M_dat), 1:(ncol(M_dat)-1))]
+dim(M_dat)
+M_dat[1:5,1:5]
+M_by_group <- group_by(M_dat, exp, subject, act)
+output <- summarize_all(M_by_group, mean)
+dim(output)
+head(output, 20); tail(output, 20)
+str(output)
+##The number of rows should be 2 types of experiment x 30 subjects x 6 motions = 360.
+##Check subject because there are missing subjects.
+##Some appear to be missing.
+output$subject
+##Recode activities from numeric to character.
+output$act <- recode(output$act, "1" = "walking", "2" = "walking_upstairs", "3" = "walking_downstairs", "4" = "sitting", 
+                     "5" = "standing", "6" = "laying")
 ##Sort by subject followed by actvity.
-tidy_dat<- arrange(dat, exp, subject, act)
-##check dimension and the format of tidy_dat
-dim(tidy_dat); tidy_dat[1:20, 1:5]; tidy_dat[(nrow(tidy_dat)-10):nrow(tidy_dat), 1:5]
+output<- arrange(output, exp, subject, act)
+##Check labels
+output[1:10, 1:5]
+##Round the measurements to four digits
+##tried to round measurements to 4 significant figures but don't know why this didn't work
+##profile <-output[, 1:3]
+##M_rounded <- signif(output[, 4:12], 4)
+##output2 <- cbind(profile, M_rounded)
+##
 ##Export tidy data as tidy_fitness_data.txt into folder
-write.table(tidy_dat, "fitness_mean_data.txt", row.name=FALSE, sep="\t")
-##Clean up memory and close
-rm(list=ls())
+write.table(output, "fitness_mean_tidy_data.txt", row.name=FALSE, sep="\t")
 ##END
+
+
