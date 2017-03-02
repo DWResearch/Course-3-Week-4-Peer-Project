@@ -35,10 +35,12 @@ Task #4 called for appropriately labelling the dataset with descriptive variable
 I did so in Task #1.
 
 Task #5 called for creating a second, independent tidy dataset with the average of each variable for each activity and subject.
-I created a wide tidy data set, "tidy_dat".
-I then used the reshape tool to group by experiment, subject, and activity before calculating the mean of the remaining columns.
-I then checked the dimensions and format of the first 20 rows and first 5 columns.
-I also checked the dimensons and format of the last 10 rows and the first 5 columns.
+The dataset from Task #1 has 10299 observtions x 1155 variables. It is too large.
+I redid Task #1, this time after each file was generated from the raw data, I created a variable for the mean of the 128 variables and attached it at the end. Then I truncated the first 128 variables.
+Then I created a column for experiment ("training" or "testing") and attached two columns for subject IDs, the activity.
+I did this for both data files for training and testing files.
+I then used row bind to merge the training and testing data files.
+I then used the reshape tool to group by experiment, subject, and activity before summarizing and calculating the average mean.
 I resorted by experiment, subject and, then activity.
 Lastly, I exported the tidy dataset in a file called "tidy_fitness_data.txt".
-
+I attempted to make the dataset even tidier by rounding to 4 significant figures but had problems executing it, so I left it out.
